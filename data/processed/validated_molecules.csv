@@ -1,0 +1,9 @@
+record_id,name,smiles,source,domain,is_valid,canonical_smiles,validation_error
+MOL-001,Vanillin,COc1cc(C=O)ccc1O,Independently curated demonstration data,fragrance,True,COc1cc(C=O)ccc1O,
+MOL-002,Propylene carbonate,CC1COC(=O)O1,Independently curated demonstration data,cyclic carbonate,True,CC1COC(=O)O1,
+MOL-003,Stereodefined ibuprofen,CC(C)Cc1ccc([C@@H](C)C(=O)O)cc1,Independently curated demonstration data,stereochemistry,True,CC(C)Cc1ccc([C@@H](C)C(=O)O)cc1,
+MOL-004,Glycine zwitterion,[NH3+]CC(=O)[O-],Independently curated demonstration data,charged structure,True,[NH3+]CC(=O)[O-],
+MOL-005,Sodium acetate,[Na+].CC(=O)[O-],Independently curated demonstration data,multifragment salt,True,CC(=O)[O-].[Na+],
+MOL-006,Benzene,c1ccccc1,Independently curated demonstration data,aromatic control,True,c1ccccc1,
+MOL-007,Unclosed ring control,C1CC,Synthetic negative control,invalid structure,False,,RDKit could not parse or sanitize this structure.
+MOL-008,Missing structure control,,Synthetic negative control,missing structure,False,,The SMILES string is empty.

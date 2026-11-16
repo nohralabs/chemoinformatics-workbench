@@ -1,0 +1,9 @@
+record_id,name,smiles,source,domain
+MOL-001,Vanillin,COc1cc(C=O)ccc1O,Independently curated demonstration data,fragrance
+MOL-002,Propylene carbonate,CC1COC(=O)O1,Independently curated demonstration data,cyclic carbonate
+MOL-003,Stereodefined ibuprofen,CC(C)Cc1ccc([C@@H](C)C(=O)O)cc1,Independently curated demonstration data,stereochemistry
+MOL-004,Glycine zwitterion,[NH3+]CC(=O)[O-],Independently curated demonstration data,charged structure
+MOL-005,Sodium acetate,[Na+].CC(=O)[O-],Independently curated demonstration data,multifragment salt
+MOL-006,Benzene,c1ccccc1,Independently curated demonstration data,aromatic control
+MOL-007,Unclosed ring control,C1CC,Synthetic negative control,invalid structure
+MOL-008,Missing structure control,,Synthetic negative control,missing structure
