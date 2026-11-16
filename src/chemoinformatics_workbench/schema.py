@@ -12,13 +12,23 @@ REQUIRED_INPUT_COLUMNS = (
 )
 
 VALIDATION_OUTPUT_COLUMNS = (
-	"is_valid",
-	"canonical_smiles",
-	"validation_error",
+    "is_valid",
+    "canonical_smiles",
+    "validation_error",
+)
+
+FRAGMENT_ANALYSIS_OUTPUT_COLUMNS = (
+    "fragment_count",
+    "is_multifragment",
+    "fragment_smiles",
+    "largest_fragment_smiles",
+    "total_formal_charge",
+    "fragment_analysis_error",
 )
 
 
 class MolecularDataSchemaError(ValueError):
+
 	"""Raised when a molecular dataset does not satisfy the required schema."""
 
 

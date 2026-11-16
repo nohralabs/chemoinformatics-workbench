@@ -98,3 +98,41 @@ def test_pipeline_rejects_invalid_schema():
 		match="Missing required columns: source",
 	):
 		validate_molecular_dataset(data)
+def test_pipeline_adds_fragment_analysis_columns():
+    """The pipeline should add all expected fragment-analysis outputs."""
+
+    data = make_molecular_dataset()
+
+    processed = validate_molecular_dataset(data)
+
+    expected_columns = {
+        "fragment_count",
+        "is_multifragment",
+        "fragment_smiles",
+        "largest_fragment_smiles",
+        "total_formal_charge",
+        "fragment_analysis_error",
+    }
+
+    assert expected_columns.issubset(processed.columns)
+
+
+def test_pipeline_reports_multifragment_salt():
+    """A salt should remain intact while its fragments are reported."""
+
+    data = make_molecular_dataset().iloc[[0]].copy()
+    data.loc[10, "name"] = "Sodium acetate"
+    data.loc[10, "smiles"] = "[Na+].CC(=O)[O-]"
+    data.loc[10, "domain"] = "multifragment salt"
+
+    processed = validate_molecular_dataset(data)
+
+    assert processed.loc[10, "fragment_count"] == 2
+    assert bool(processed.loc[10, "is_multifragment"]) is True
+    assert set(processed.loc[10, "fragment_smiles"].split("|")) == {
+        "[Na+]",
+        "CC(=O)[O-]",
+    }
+    assert processed.loc[10, "largest_fragment_smiles"] == "CC(=O)[O-]"
+    assert processed.loc[10, "total_formal_charge"] == 0
+    assert pd.isna(processed.loc[10, "fragment_analysis_error"])
