@@ -8,7 +8,7 @@ from chemoinformatics_workbench.standardization import (
     select_parent_fragment,
 )
 from chemoinformatics_workbench.validation import validate_smiles
-
+from chemoinformatics_workbench.normalization import normalize_charge
 
 def validate_molecular_dataset(data: pd.DataFrame) -> pd.DataFrame:
     """Validate and characterize every molecular record."""
@@ -125,5 +125,84 @@ def validate_molecular_dataset(data: pd.DataFrame) -> pd.DataFrame:
             .PARENT_SELECTION_OUTPUT_COLUMNS
         )
     ] = parent_table
+    normalization_results = [
+        (
+            normalize_charge(result.parent_smiles)
+            if result.parent_smiles is not None
+            else None
+        )
+        for result in parent_results
+    ]
 
-    return processed_data
+    normalization_table = pd.DataFrame(
+        {
+            "charge_normalization_status": [
+                (
+                    result.status
+                    if result is not None
+                    else "not_attempted"
+                )
+                for result in normalization_results
+            ],
+            "charge_normalized_smiles": [
+                (
+                    result.normalized_smiles
+                    if result is not None
+                    else None
+                )
+                for result in normalization_results
+            ],
+            "original_parent_formal_charge": pd.array(
+                [
+                    (
+                        result.original_formal_charge
+                        if result is not None
+                        else None
+                    )
+                    for result in normalization_results
+                ],
+                dtype="Int64",
+            ),
+            "normalized_formal_charge": pd.array(
+                [
+                    (
+                        result.normalized_formal_charge
+                        if result is not None
+                        else None
+                    )
+                    for result in normalization_results
+                ],
+                dtype="Int64",
+            ),
+            "charge_was_changed": [
+                (
+                    result.was_changed
+                    if result is not None
+                    else False
+                )
+                for result in normalization_results
+            ],
+            "charge_normalization_error": [
+                (
+                    result.error
+                    if result is not None
+                    else (
+                        "Charge normalization was not attempted "
+                        "because parent selection did not produce "
+                        "a molecular structure."
+                    )
+                )
+                for result in normalization_results
+            ],
+        },
+        index=processed_data.index,
+    )
+
+    processed_data[
+        list(
+            chemoinformatics_workbench.schema
+            .CHARGE_NORMALIZATION_OUTPUT_COLUMNS
+        )
+    ] = normalization_table
+    
+    return processed_data 

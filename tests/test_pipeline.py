@@ -182,4 +182,74 @@ def test_pipeline_reports_ambiguous_parent_selection():
     assert processed.loc[10, "parent_selection_status"] == "ambiguous_parent"
     assert pd.isna(processed.loc[10, "parent_smiles"])
     assert processed.loc[10, "excluded_fragment_smiles"] == ""
-    assert processed.loc[10, "parent_selection_error"] is not None	
+    assert processed.loc[10, "parent_selection_error"] is not None
+
+
+def test_pipeline_adds_charge_normalization_columns():
+    """The pipeline should expose auditable charge-normalization outputs."""
+
+    data = make_molecular_dataset()
+
+    processed = validate_molecular_dataset(data)
+
+    expected_columns = {
+        "charge_normalization_status",
+        "charge_normalized_smiles",
+        "original_parent_formal_charge",
+        "normalized_formal_charge",
+        "charge_was_changed",
+        "charge_normalization_error",
+    }
+
+    assert expected_columns.issubset(processed.columns)
+
+
+def test_pipeline_normalizes_selected_salt_parent():
+    """Charge normalization should operate on the selected parent."""
+
+    data = make_molecular_dataset().iloc[[0]].copy()
+    data.loc[10, "name"] = "Sodium acetate"
+    data.loc[10, "smiles"] = "[Na+].CC(=O)[O-]"
+    data.loc[10, "domain"] = "multifragment salt"
+
+    processed = validate_molecular_dataset(data)
+
+    assert processed.loc[10, "parent_smiles"] == "CC(=O)[O-]"
+    assert processed.loc[10, "charge_normalization_status"] == "normalized"
+    assert processed.loc[10, "charge_normalized_smiles"] == "CC(=O)O"
+    assert processed.loc[10, "original_parent_formal_charge"] == -1
+    assert processed.loc[10, "normalized_formal_charge"] == 0
+    assert bool(processed.loc[10, "charge_was_changed"]) is True
+    assert pd.isna(processed.loc[10, "charge_normalization_error"])
+
+
+def test_pipeline_normalizes_zwitterionic_parent():
+    """A connected zwitterion may change despite having zero net charge."""
+
+    data = make_molecular_dataset()
+
+    processed = validate_molecular_dataset(data)
+
+    assert processed.loc[30, "parent_smiles"] == "[NH3+]CC(=O)[O-]"
+    assert processed.loc[30, "charge_normalization_status"] == "normalized"
+    assert processed.loc[30, "charge_normalized_smiles"] == "NCC(=O)O"
+    assert processed.loc[30, "original_parent_formal_charge"] == 0
+    assert processed.loc[30, "normalized_formal_charge"] == 0
+    assert bool(processed.loc[30, "charge_was_changed"]) is True
+
+
+def test_pipeline_skips_normalization_without_parent():
+    """An ambiguous parent decision should prevent charge normalization."""
+
+    data = make_molecular_dataset().iloc[[0]].copy()
+    data.loc[10, "name"] = "Ambiguous organic mixture"
+    data.loc[10, "smiles"] = "CCO.CCN"
+    data.loc[10, "domain"] = "mixture control"
+
+    processed = validate_molecular_dataset(data)
+
+    assert processed.loc[10, "parent_selection_status"] == "ambiguous_parent"
+    assert processed.loc[10, "charge_normalization_status"] == "not_attempted"
+    assert pd.isna(processed.loc[10, "charge_normalized_smiles"])
+    assert bool(processed.loc[10, "charge_was_changed"]) is False
+    assert processed.loc[10, "charge_normalization_error"] is not None

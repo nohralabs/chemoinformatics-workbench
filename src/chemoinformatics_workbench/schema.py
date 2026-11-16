@@ -31,6 +31,14 @@ PARENT_SELECTION_OUTPUT_COLUMNS = (
     "excluded_fragment_smiles",
     "parent_selection_error",
 )
+CHARGE_NORMALIZATION_OUTPUT_COLUMNS = (
+    "charge_normalization_status",
+    "charge_normalized_smiles",
+    "original_parent_formal_charge",
+    "normalized_formal_charge",
+    "charge_was_changed",
+    "charge_normalization_error",
+)
 
 class MolecularDataSchemaError(ValueError):
 
