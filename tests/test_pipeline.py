@@ -136,3 +136,50 @@ def test_pipeline_reports_multifragment_salt():
     assert processed.loc[10, "largest_fragment_smiles"] == "CC(=O)[O-]"
     assert processed.loc[10, "total_formal_charge"] == 0
     assert pd.isna(processed.loc[10, "fragment_analysis_error"])
+def test_pipeline_adds_parent_selection_columns():
+    """The pipeline should expose traceable parent-selection outputs."""
+
+    data = make_molecular_dataset()
+
+    processed = validate_molecular_dataset(data)
+
+    expected_columns = {
+        "parent_selection_status",
+        "parent_smiles",
+        "excluded_fragment_smiles",
+        "parent_selection_error",
+    }
+
+    assert expected_columns.issubset(processed.columns)
+
+
+def test_pipeline_reports_salt_parent_selection():
+    """A salt should report its parent and excluded counterion."""
+
+    data = make_molecular_dataset().iloc[[0]].copy()
+    data.loc[10, "name"] = "Sodium acetate"
+    data.loc[10, "smiles"] = "[Na+].CC(=O)[O-]"
+    data.loc[10, "domain"] = "multifragment salt"
+
+    processed = validate_molecular_dataset(data)
+
+    assert processed.loc[10, "parent_selection_status"] == "parent_selected"
+    assert processed.loc[10, "parent_smiles"] == "CC(=O)[O-]"
+    assert processed.loc[10, "excluded_fragment_smiles"] == "[Na+]"
+    assert pd.isna(processed.loc[10, "parent_selection_error"])
+
+
+def test_pipeline_reports_ambiguous_parent_selection():
+    """Equal-sized carbon fragments should remain unresolved."""
+
+    data = make_molecular_dataset().iloc[[0]].copy()
+    data.loc[10, "name"] = "Ambiguous organic mixture"
+    data.loc[10, "smiles"] = "CCO.CCN"
+    data.loc[10, "domain"] = "mixture control"
+
+    processed = validate_molecular_dataset(data)
+
+    assert processed.loc[10, "parent_selection_status"] == "ambiguous_parent"
+    assert pd.isna(processed.loc[10, "parent_smiles"])
+    assert processed.loc[10, "excluded_fragment_smiles"] == ""
+    assert processed.loc[10, "parent_selection_error"] is not None	

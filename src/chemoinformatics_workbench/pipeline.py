@@ -2,19 +2,18 @@
 
 import pandas as pd
 
-from chemoinformatics_workbench.schema import (
-    FRAGMENT_ANALYSIS_OUTPUT_COLUMNS,
-    VALIDATION_OUTPUT_COLUMNS,
-    validate_input_schema,
+import chemoinformatics_workbench.schema
+from chemoinformatics_workbench.standardization import (
+    analyze_fragments,
+    select_parent_fragment,
 )
-from chemoinformatics_workbench.standardization import analyze_fragments
 from chemoinformatics_workbench.validation import validate_smiles
 
 
 def validate_molecular_dataset(data: pd.DataFrame) -> pd.DataFrame:
     """Validate and characterize every molecular record."""
 
-    validate_input_schema(data)
+    chemoinformatics_workbench.schema.validate_input_schema(data)
 
     processed_data = data.copy(deep=True)
 
@@ -41,7 +40,12 @@ def validate_molecular_dataset(data: pd.DataFrame) -> pd.DataFrame:
         index=processed_data.index,
     )
 
-    processed_data[list(VALIDATION_OUTPUT_COLUMNS)] = validation_table
+    processed_data[
+        list(
+            chemoinformatics_workbench.schema
+            .VALIDATION_OUTPUT_COLUMNS
+        )
+    ] = validation_table
 
     fragment_results = [
         analyze_fragments(smiles)
@@ -67,12 +71,12 @@ def validate_molecular_dataset(data: pd.DataFrame) -> pd.DataFrame:
                 for result in fragment_results
             ],
             "total_formal_charge": pd.array(
-    [
-        result.total_formal_charge
-        for result in fragment_results
-    ],
-    dtype="Int64",
-),
+                [
+                    result.total_formal_charge
+                    for result in fragment_results
+                ],
+                dtype="Int64",
+            ),
             "fragment_analysis_error": [
                 result.error
                 for result in fragment_results
@@ -82,7 +86,44 @@ def validate_molecular_dataset(data: pd.DataFrame) -> pd.DataFrame:
     )
 
     processed_data[
-        list(FRAGMENT_ANALYSIS_OUTPUT_COLUMNS)
+        list(
+            chemoinformatics_workbench.schema
+            .FRAGMENT_ANALYSIS_OUTPUT_COLUMNS
+        )
     ] = fragment_table
+
+    parent_results = [
+        select_parent_fragment(smiles)
+        for smiles in processed_data["smiles"]
+    ]
+
+    parent_table = pd.DataFrame(
+        {
+            "parent_selection_status": [
+                result.status
+                for result in parent_results
+            ],
+            "parent_smiles": [
+                result.parent_smiles
+                for result in parent_results
+            ],
+            "excluded_fragment_smiles": [
+                "|".join(result.excluded_fragment_smiles)
+                for result in parent_results
+            ],
+            "parent_selection_error": [
+                result.error
+                for result in parent_results
+            ],
+        },
+        index=processed_data.index,
+    )
+
+    processed_data[
+        list(
+            chemoinformatics_workbench.schema
+            .PARENT_SELECTION_OUTPUT_COLUMNS
+        )
+    ] = parent_table
 
     return processed_data

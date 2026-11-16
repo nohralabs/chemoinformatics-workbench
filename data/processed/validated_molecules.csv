@@ -1,9 +1,9 @@
-record_id,name,smiles,source,domain,is_valid,canonical_smiles,validation_error,fragment_count,is_multifragment,fragment_smiles,largest_fragment_smiles,total_formal_charge,fragment_analysis_error
-MOL-001,Vanillin,COc1cc(C=O)ccc1O,Independently curated demonstration data,fragrance,True,COc1cc(C=O)ccc1O,,1,False,COc1cc(C=O)ccc1O,COc1cc(C=O)ccc1O,0,
-MOL-002,Propylene carbonate,CC1COC(=O)O1,Independently curated demonstration data,cyclic carbonate,True,CC1COC(=O)O1,,1,False,CC1COC(=O)O1,CC1COC(=O)O1,0,
-MOL-003,Stereodefined ibuprofen,CC(C)Cc1ccc([C@@H](C)C(=O)O)cc1,Independently curated demonstration data,stereochemistry,True,CC(C)Cc1ccc([C@@H](C)C(=O)O)cc1,,1,False,CC(C)Cc1ccc([C@@H](C)C(=O)O)cc1,CC(C)Cc1ccc([C@@H](C)C(=O)O)cc1,0,
-MOL-004,Glycine zwitterion,[NH3+]CC(=O)[O-],Independently curated demonstration data,charged structure,True,[NH3+]CC(=O)[O-],,1,False,[NH3+]CC(=O)[O-],[NH3+]CC(=O)[O-],0,
-MOL-005,Sodium acetate,[Na+].CC(=O)[O-],Independently curated demonstration data,multifragment salt,True,CC(=O)[O-].[Na+],,2,True,[Na+]|CC(=O)[O-],CC(=O)[O-],0,
-MOL-006,Benzene,c1ccccc1,Independently curated demonstration data,aromatic control,True,c1ccccc1,,1,False,c1ccccc1,c1ccccc1,0,
-MOL-007,Unclosed ring control,C1CC,Synthetic negative control,invalid structure,False,,RDKit could not parse or sanitize this structure.,0,False,,,,RDKit could not parse or sanitize this structure.
-MOL-008,Missing structure control,,Synthetic negative control,missing structure,False,,The SMILES string is empty.,0,False,,,,The SMILES string is empty.
+record_id,name,smiles,source,domain,is_valid,canonical_smiles,validation_error,fragment_count,is_multifragment,fragment_smiles,largest_fragment_smiles,total_formal_charge,fragment_analysis_error,parent_selection_status,parent_smiles,excluded_fragment_smiles,parent_selection_error
+MOL-001,Vanillin,COc1cc(C=O)ccc1O,Independently curated demonstration data,fragrance,True,COc1cc(C=O)ccc1O,,1,False,COc1cc(C=O)ccc1O,COc1cc(C=O)ccc1O,0,,single_fragment,COc1cc(C=O)ccc1O,,
+MOL-002,Propylene carbonate,CC1COC(=O)O1,Independently curated demonstration data,cyclic carbonate,True,CC1COC(=O)O1,,1,False,CC1COC(=O)O1,CC1COC(=O)O1,0,,single_fragment,CC1COC(=O)O1,,
+MOL-003,Stereodefined ibuprofen,CC(C)Cc1ccc([C@@H](C)C(=O)O)cc1,Independently curated demonstration data,stereochemistry,True,CC(C)Cc1ccc([C@@H](C)C(=O)O)cc1,,1,False,CC(C)Cc1ccc([C@@H](C)C(=O)O)cc1,CC(C)Cc1ccc([C@@H](C)C(=O)O)cc1,0,,single_fragment,CC(C)Cc1ccc([C@@H](C)C(=O)O)cc1,,
+MOL-004,Glycine zwitterion,[NH3+]CC(=O)[O-],Independently curated demonstration data,charged structure,True,[NH3+]CC(=O)[O-],,1,False,[NH3+]CC(=O)[O-],[NH3+]CC(=O)[O-],0,,single_fragment,[NH3+]CC(=O)[O-],,
+MOL-005,Sodium acetate,[Na+].CC(=O)[O-],Independently curated demonstration data,multifragment salt,True,CC(=O)[O-].[Na+],,2,True,[Na+]|CC(=O)[O-],CC(=O)[O-],0,,parent_selected,CC(=O)[O-],[Na+],
+MOL-006,Benzene,c1ccccc1,Independently curated demonstration data,aromatic control,True,c1ccccc1,,1,False,c1ccccc1,c1ccccc1,0,,single_fragment,c1ccccc1,,
+MOL-007,Unclosed ring control,C1CC,Synthetic negative control,invalid structure,False,,RDKit could not parse or sanitize this structure.,0,False,,,,RDKit could not parse or sanitize this structure.,invalid,,,RDKit could not parse or sanitize this structure.
+MOL-008,Missing structure control,,Synthetic negative control,missing structure,False,,The SMILES string is empty.,0,False,,,,The SMILES string is empty.,invalid,,,The SMILES string is empty.

@@ -25,7 +25,12 @@ FRAGMENT_ANALYSIS_OUTPUT_COLUMNS = (
     "total_formal_charge",
     "fragment_analysis_error",
 )
-
+PARENT_SELECTION_OUTPUT_COLUMNS = (
+    "parent_selection_status",
+    "parent_smiles",
+    "excluded_fragment_smiles",
+    "parent_selection_error",
+)
 
 class MolecularDataSchemaError(ValueError):
 
