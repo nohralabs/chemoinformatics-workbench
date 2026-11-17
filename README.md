@@ -1,4 +1,5 @@
 # Chemoinformatics Workbench
+[![Tests](https://github.com/nohralabs/chemoinformatics-workbench/actions/workflows/tests.yml/badge.svg)](https://github.com/nohralabs/chemoinformatics-workbench/actions/workflows/tests.yml)
 
 A reproducible molecular-data platform for structure validation, chemical standardization, descriptor calculation, similarity searching, chemical-space exploration and QSAR modelling using Python and RDKit.
 
